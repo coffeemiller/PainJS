@@ -49,6 +49,10 @@ body {
     transform: scale(0.98);
 }
 
+.controls__btns .checked {
+    background-color: cyan;
+}
+
 .controls .controls__colors {
     display: flex;
 }

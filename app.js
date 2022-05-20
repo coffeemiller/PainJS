@@ -4,6 +4,8 @@ const colors = document.getElementsByClassName("jsColor");
 const range = document.getElementById("jsRange");
 const mode = document.getElementById("jsMode");
 const saveBtn = document.getElementById("jsSave");
+const eraser = document.getElementById("jsEraser");
+const clear = document.getElementById("jsClear");
 
 const INITIAL_COLOR = "#2c2c2c"
 const CANVAS_SIZE = 700;
@@ -11,14 +13,24 @@ const CANVAS_SIZE = 700;
 canvas.width = CANVAS_SIZE;
 canvas.height = CANVAS_SIZE;
 
-ctx.fillStyle = "white";
-ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-ctx.strokeStyle = INITIAL_COLOR;
-ctx.fillStyle = INITIAL_COLOR;
-ctx.lineWidth = 2.5;
-
 let painting = false;
 let filling = false;
+let erasing = false;
+
+init();
+
+function init() {
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    ctx.strokeStyle = INITIAL_COLOR;
+    ctx.fillStyle = INITIAL_COLOR;
+    ctx.lineWidth = 2.5;
+
+    painting = false;
+    filling = false;
+    erasing = false;
+    eraserInit();
+}
 
 function stopPainting() {
     painting = false;
@@ -57,9 +69,11 @@ function handleModeClick(event) {
     if (filling === true) {
         filling = false;
         mode.innerText = "Fill";
+        eraserInit();
     } else {
         filling = true;
         mode.innerText = "Paint";
+        eraserInit();
     }
 }
 
@@ -81,6 +95,32 @@ function handleSaveClick(event) {
     link.click();
 }
 
+function eraserInit() {
+    erasing = false;
+    ctx.strokeStyle = INITIAL_COLOR;
+    ctx.fillStyle = INITIAL_COLOR;
+    eraser.classList.remove("checked");
+}
+
+function handleEraserClick(event) {
+    if (erasing === true) {
+        erasing = false;
+        filling = true;
+        ctx.strokeStyle = INITIAL_COLOR;
+        ctx.fillStyle = INITIAL_COLOR;
+    } else {
+        erasing = true;
+        filling = false;
+        ctx.strokeStyle = "white";
+        ctx.fillStyle = "white";
+    }
+    eraser.classList.toggle("checked");
+}
+
+function handleClearClick(event) {
+    init();
+}
+
 if (canvas) {
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mousedown", startPainting);
@@ -90,7 +130,6 @@ if (canvas) {
     canvas.addEventListener("contextmenu", handleContextMeunu);
 }
 
-// console.log(Array.from(colors));
 Array.from(colors).forEach(color => color.addEventListener("click", handleColorClick));
 
 if (range) {
@@ -103,4 +142,12 @@ if (mode) {
 
 if (saveBtn) {
     saveBtn.addEventListener("click", handleSaveClick);
+}
+
+if (eraser) {
+    eraser.addEventListener("click", handleEraserClick);
+}
+
+if (clear) {
+    clear.addEventListener("click", handleClearClick);
 }
